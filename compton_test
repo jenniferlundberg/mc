@@ -1,0 +1,52 @@
+function simulateComptonScattering()
+
+    % Fixed energy for photons
+    photonEnergy = 511; % You can set your desired energy
+
+    % Number of photons to simulate
+    numPhotons = 100000;
+
+    % Arrays to store scattering angles
+    scatteringAngles = zeros(1, numPhotons);
+
+    % Simulate Compton scattering for each photon
+    for i = 1:numPhotons
+        [costheta, ~] = Compton(photonEnergy);
+        scatteringAngles(i) = acosd(costheta); % Convert cosine to degrees
+    end
+
+    % Plot histogram
+    figure;
+    histogram(scatteringAngles, 'BinWidth', 1, 'Normalization', 'probability');
+    title('Compton Scattering Angles');
+    xlabel('Scattering Angle (degrees)');
+    ylabel('Probability');
+    grid on;
+
+end
+
+function [costheta, fotonenergi] = Compton(fotonenergi)
+    alpha = fotonenergi/511; 
+    b = 1;
+    while b == 1 
+        R1 = rand();
+        R2 = rand();
+        R3 = rand();
+        if R1 <= (2*alpha+1)/(2*alpha+9)
+            eta = 2*alpha*R2;
+            
+            if R3 <= 4*(eta^(-1)-eta^(-2))
+                costheta = 1 - 2*R2;
+                b = 0;
+            end
+        elseif R1 > (2*alpha+1)/(2*alpha+9)
+            eta = (2*alpha+1)/(2*R2*alpha+1);
+            costheta = 1 - (eta-1)/alpha;
+            
+            if R3 <= 0.5*(costheta^2+eta^(-1))
+                b = 0;
+            end
+        end
+    end
+    fotonenergi = fotonenergi / eta;
+end
